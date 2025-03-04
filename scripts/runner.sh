@@ -9,7 +9,7 @@ set -euxo pipefail
 #
 
 # Create a folder
-mkdir actions-runner 
+# mkdir actions-runner 
 cd actions-runner
 # Download the latest runner package
 curl -o actions-runner-linux-x64-2.322.0.tar.gz -L https://github.com/actions/runner/releases/download/v2.322.0/actions-runner-linux-x64-2.322.0.tar.gz
@@ -22,7 +22,7 @@ chown -R vagrant:vagrant /home/vagrant/actions-runner
 #
 
 # Create the runner and start the configuration experience
-sudo -u vagrant ./config.sh --unattended --replace --url https://github.com/oldmxnk/k8s-vagrant --token BGB5O5SVAVF2LQ6U26V3FQLHY5JV2
+sudo -u vagrant ./config.sh --unattended --replace --url https://github.com/TBSimonfi/kube_cluster --token AJRTUPQANMUPTCWKBVIKPJLHY5Z7A
 # Last step, install service and start it
 sudo ./svc.sh install vagrant
 sudo ./svc.sh start
