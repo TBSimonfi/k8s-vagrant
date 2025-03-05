@@ -34,7 +34,7 @@ jobs:
         EOF
     - name: Wait for Ingress Controller
       run: |
-        sleep 30  # Wait for the Ingress controller to be fully up and running
+        sleep 15  # Wait for the Ingress controller to be fully up and running
     - name: Deploy Argo CD
       run: |
         kubectl get namespace argocd || kubectl create namespace argocd
@@ -47,7 +47,7 @@ jobs:
         echo "LOCAL_IP=${LOCAL_IP}" >> $GITHUB_ENV
     - name: Wait for Argo CD to wake up
       run: |
-        sleep 30  # Wait for the Argo CD to be fully up and running
+        sleep 15  # Wait for the Argo CD to be fully up and running
     - name: Print Argo CD Access Information
       run: |
         echo "Argo CD can be accessed at http://${LOCAL_IP}:32080"
