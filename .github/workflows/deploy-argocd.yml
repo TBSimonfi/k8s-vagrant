@@ -45,6 +45,9 @@ jobs:
       run: |
         LOCAL_IP=$(hostname -I | awk '{print $1}')
         echo "LOCAL_IP=${LOCAL_IP}" >> $GITHUB_ENV
+    - name: Wait for Argo CD to wake up
+      run: |
+        sleep 30  # Wait for the Argo CD to be fully up and running
     - name: Print Argo CD Access Information
       run: |
         echo "Argo CD can be accessed at http://${LOCAL_IP}:32080"
