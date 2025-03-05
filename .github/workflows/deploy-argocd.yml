@@ -48,3 +48,5 @@ jobs:
     - name: Print Argo CD Access Information
       run: |
         echo "Argo CD can be accessed at http://${LOCAL_IP}:32080"
+        echo "Password is as below:"
+        kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
