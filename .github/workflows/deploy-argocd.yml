@@ -1,8 +1,13 @@
 name: Deploy Argo CD
 on:
   push:
+<<<<<<< HEAD
     branches:
       - main
+=======
+    branches: 
+    - main
+>>>>>>> ed4c9453b92826714790fcda7244f43df9ec552f
 jobs:
   deploy:
     runs-on: self-hosted
