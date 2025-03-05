@@ -24,11 +24,11 @@ jobs:
             - name: http
               port: 80
               targetPort: 80
-              nodePort: 32080  # Change this to any available port
+              nodePort: 16080  # Change this to any available port
             - name: https
               port: 443
               targetPort: 443
-              nodePort: 32443  # Change this to any available port
+              nodePort: 16443  # Change this to any available port
           selector:
             app.kubernetes.io/name: ingress-nginx
         EOF
