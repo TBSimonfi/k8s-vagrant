@@ -9,10 +9,43 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
+    - name: Deploy Ingress Controller
+      run: |
+        kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml
+    - name: Wait for Ingress Controller
+      run: |
+        sleep 60  # Wait for the Ingress controller to be fully up and running
+    - name: Get Ingress Controller IP Address
+      id: get-ip
+      run: |
+        EXTERNAL_IP=$(kubectl get svc ingress-nginx-controller -n ingress-nginx -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+        echo "EXTERNAL_IP=${EXTERNAL_IP}" >> $GITHUB_ENV
     - name: Deploy Argo CD
       run: |
         kubectl create namespace argocd
         kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-    # - name: Enable Insecure Mode
-    #   run: |
-    #     kubectl patch deployment argocd-server -n argocd --type='json' -p='[{"op": "add", "path": "/spec/template/spec/containers/0/args", "value": ["--insecure"]}]'
+    - name: Configure Ingress
+      run: |
+        cat <<EOF | kubectl apply -f -
+        apiVersion: networking.k8s.io/v1
+        kind: Ingress
+        metadata:
+          name: argocd-server-ingress
+          namespace: argocd
+          annotations:
+            nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+            nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+        spec:
+          ingressClassName: nginx
+          rules:
+            - host: ${EXTERNAL_IP}
+              http:
+                paths:
+                  - path: /
+                    pathType: Prefix
+                    backend:
+                      service:
+                        name: argocd-server
+                        port:
+                          name: https
+        EOF
