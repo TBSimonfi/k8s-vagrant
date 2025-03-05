@@ -34,7 +34,7 @@ jobs:
         EOF
     - name: Wait for Ingress Controller
       run: |
-        sleep 60  # Wait for the Ingress controller to be fully up and running
+        sleep 30  # Wait for the Ingress controller to be fully up and running
     - name: Deploy Argo CD
       run: |
         kubectl create namespace argocd

@@ -8,7 +8,7 @@ set -euxo pipefail
 REPO_URL="https://github.com/TBSimonfi/k8s-vagrant"
 API_URL="https://api.github.com/repos/TBSimonfi/k8s-vagrant"
 
-GITHUB_TOKEN="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"
+GITHUB_TOKEN="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"
 
 
 RUNNER_NAME="self-hosted-k8s-runner"

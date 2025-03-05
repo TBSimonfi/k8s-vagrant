@@ -29,6 +29,7 @@ Vagrant.configure("2") do |config|
   config.vm.define "controlplane" do |controlplane|
     controlplane.vm.hostname = "controlplane"
     controlplane.vm.network "private_network", ip: settings["network"]["control_ip"]
+    controlplane.vm.network "forwarded_port", guest: 32080, host: 8080, guest_ip: "10.0.0.10", host_ip: "127.0.0.1"
     if settings["shared_folders"]
       settings["shared_folders"].each do |shared_folder|
         controlplane.vm.synced_folder shared_folder["host_path"], shared_folder["vm_path"]
@@ -98,7 +99,7 @@ Vagrant.configure("2") do |config|
   config.vm.define "runner" do |runner|
     runner.vm.hostname = "runner"
     runner.vm.network "private_network", ip: settings["network"]["runner_ip"]
-    runner.vm.network "forwarded_port", guest: 8080, host: 8080, guest_ip: "10.0.0.50", host_ip: "127.0.0.1"
+    # runner.vm.network "forwarded_port", guest: 8080, host: 8080, guest_ip: "10.0.0.50", host_ip: "127.0.0.1"
     runner.vm.network "forwarded_port", guest: 8001, host: 8001, guest_ip: "10.0.0.50", host_ip: "127.0.0.1"
     if settings["shared_folders"]
       settings["shared_folders"].each do |shared_folder|
