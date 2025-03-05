@@ -7,7 +7,7 @@ set -euxo pipefail
 # Variables
 REPO_URL="https://github.com/TBSimonfi/k8s-vagrant"
 API_URL="https://api.github.com/repos/TBSimonfi/k8s-vagrant"
-GITHUB_TOKEN="your_new_personal_access_token"
+GITHUB_TOKEN="y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"
 RUNNER_NAME="self-hosted-k8s-runner"
 RUNNER_LABELS="self-hosted,Linux,K8s"
 RUNNER_DIR="/home/vagrant/actions-runner"
