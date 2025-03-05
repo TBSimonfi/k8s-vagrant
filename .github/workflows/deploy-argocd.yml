@@ -12,14 +12,34 @@ jobs:
     - name: Deploy Ingress Controller
       run: |
         kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml
+        kubectl apply -f - <<EOF
+        apiVersion: v1
+        kind: Service
+        metadata:
+          name: ingress-nginx-controller
+          namespace: ingress-nginx
+        spec:
+          type: NodePort
+          ports:
+            - name: http
+              port: 80
+              targetPort: 80
+              nodePort: 32080  # Change this to any available port
+            - name: https
+              port: 443
+              targetPort: 443
+              nodePort: 32443  # Change this to any available port
+          selector:
+            app.kubernetes.io/name: ingress-nginx
+        EOF
     - name: Wait for Ingress Controller
       run: |
         sleep 60  # Wait for the Ingress controller to be fully up and running
-    - name: Get Ingress Controller IP Address
+    - name: Get Local IP Address
       id: get-ip
       run: |
-        EXTERNAL_IP=$(kubectl get svc ingress-nginx-controller -n ingress-nginx -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
-        echo "EXTERNAL_IP=${EXTERNAL_IP}" >> $GITHUB_ENV
+        LOCAL_IP=$(hostname -I | awk '{print $1}')
+        echo "LOCAL_IP=${LOCAL_IP}" >> $GITHUB_ENV
     - name: Deploy Argo CD
       run: |
         kubectl create namespace argocd
@@ -38,7 +58,7 @@ jobs:
         spec:
           ingressClassName: nginx
           rules:
-            - host: ${EXTERNAL_IP}
+            - host: ${LOCAL_IP}
               http:
                 paths:
                   - path: /
