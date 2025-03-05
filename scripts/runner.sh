@@ -7,10 +7,12 @@ set -euxo pipefail
 # Variables
 REPO_URL="https://github.com/TBSimonfi/k8s-vagrant"
 API_URL="https://api.github.com/repos/TBSimonfi/k8s-vagrant"
+
 GITHUB_TOKEN="your_personal_access_token"
+
+
 RUNNER_NAME="self-hosted-k8s-runner"
 RUNNER_LABELS="self-hosted,Linux,K8s"
-RUNNER_DIR="/home/vagrant/actions-runner"
 
 # Install dependencies
 sudo apt-get install -y curl jq
@@ -19,20 +21,17 @@ sudo apt-get install -y curl jq
 # Install Runner
 #
 
-# Check if the runner directory exists
-if [ ! -d "$RUNNER_DIR" ]; then
-  mkdir -p $RUNNER_DIR
-fi
+# Create a folder
+mkdir actions-runner 
+cd actions-runner
 
-cd $RUNNER_DIR
+# Download the latest runner package
+curl -o actions-runner-linux-x64-2.322.0.tar.gz -L https://github.com/actions/runner/releases/download/v2.322.0/actions-runner-linux-x64-2.322.0.tar.gz
 
-# Download the latest runner package if it doesn't exist
-if [ ! -f actions-runner-linux-x64-2.322.0.tar.gz ]; then
-  curl -o actions-runner-linux-x64-2.322.0.tar.gz -L https://github.com/actions/runner/releases/download/v2.322.0/actions-runner-linux-x64-2.322.0.tar.gz
-  tar xzf ./actions-runner-linux-x64-2.322.0.tar.gz
-  chown -R vagrant:vagrant $RUNNER_DIR
-  rm -f ./actions-runner-linux-x64-2.322.0.tar.gz
-fi
+# Extract the installer
+tar xzf ./actions-runner-linux-x64-2.322.0.tar.gz
+chown -R vagrant:vagrant /home/vagrant/actions-runner 
+rm -f ./actions-runner-linux-x64-2.322.0.tar.gz
 
 # Get the runner token from GitHub
 RUNNER_TOKEN=$(curl -X POST -H "Authorization: Bearer $GITHUB_TOKEN" -H "Accept: application/vnd.github.v3+json" "$API_URL/actions/runners/registration-token" | jq -e -r .token)
