@@ -58,7 +58,7 @@ jobs:
         spec:
           ingressClassName: nginx
           rules:
-            - host: ${LOCAL_IP}
+            - host: '*'
               http:
                 paths:
                   - path: /
