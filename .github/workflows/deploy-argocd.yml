@@ -35,37 +35,16 @@ jobs:
     - name: Wait for Ingress Controller
       run: |
         sleep 60  # Wait for the Ingress controller to be fully up and running
+    - name: Deploy Argo CD
+      run: |
+        kubectl create namespace argocd
+        kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+        kubectl patch svc argocd-server -n argocd --type='json' -p='[{"op": "replace", "path": "/spec/type", "value": "NodePort"}, {"op": "replace", "path": "/spec/ports/0/nodePort", "value": 32080}]'
     - name: Get Local IP Address
       id: get-ip
       run: |
         LOCAL_IP=$(hostname -I | awk '{print $1}')
         echo "LOCAL_IP=${LOCAL_IP}" >> $GITHUB_ENV
-    - name: Deploy Argo CD
+    - name: Print Argo CD Access Information
       run: |
-        kubectl create namespace argocd
-        kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-    - name: Configure Ingress
-      run: |
-        cat <<EOF | kubectl apply -f -
-        apiVersion: networking.k8s.io/v1
-        kind: Ingress
-        metadata:
-          name: argocd-server-ingress
-          namespace: argocd
-          annotations:
-            nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-            nginx.ingress.kubernetes.io/ssl-passthrough: "true"
-        spec:
-          ingressClassName: nginx
-          rules:
-            - host: '*'
-              http:
-                paths:
-                  - path: /
-                    pathType: Prefix
-                    backend:
-                      service:
-                        name: argocd-server
-                        port:
-                          name: https
-        EOF
+        echo "Argo CD can be accessed at http://${LOCAL_IP}:32080"
